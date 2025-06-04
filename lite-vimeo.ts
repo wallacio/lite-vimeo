@@ -39,6 +39,8 @@ export class LiteVimeoEmbed extends HTMLElement {
     jpeg: HTMLSourceElement;
   };
   private domRefPlayButton!: HTMLButtonElement;
+  // private static isPreconnected = false;
+  // private isIframeLoaded = false;
 
   constructor() {
     super();
@@ -133,14 +135,18 @@ export class LiteVimeoEmbed extends HTMLElement {
           position: absolute;
           width: 100%;
           height: 100%;
+          left: 0;
+          top: 0;
         }
 
         #frame {
           cursor: pointer;
         }
 
-        #fallbackPlaceholder {
+        #fallbackPlaceholder,
+        slot[name=image]::slotted(*) {
           object-fit: cover;
+          width: 100%;
         }
 
         #frame::before {
@@ -199,14 +205,16 @@ export class LiteVimeoEmbed extends HTMLElement {
       </style>
       <div id="frame">
         <picture>
-          <source id="webpPlaceholder" type="image/webp">
-          <source id="jpegPlaceholder" type="image/jpeg">
-          <img id="fallbackPlaceholder"
-               referrerpolicy="origin"
-               width="1100"
-               height="619"
-               decoding="async"
-               loading="lazy">
+          <slot name="image">
+            <source id="webpPlaceholder" type="image/webp">
+            <source id="jpegPlaceholder" type="image/jpeg">
+            <img id="fallbackPlaceholder"
+                referrerpolicy="origin"
+                width="1100"
+                height="619"
+                decoding="async"
+                loading="lazy">
+          </slot>
         </picture>
         <button class="lvo-playbtn"></button>
       </div>
@@ -232,7 +240,14 @@ export class LiteVimeoEmbed extends HTMLElement {
    * Parse our attributes and fire up some placeholders
    */
   private setupComponent(): void {
-    this.initImagePlaceholder();
+    // If the named slot is not empty, then we save the network requests and
+    // don't fire up the selector; we use assignedNodes() since we're using
+    // default slot elements for the picture
+    const hasImgSlot: HTMLSlotElement =
+      this.shadowRoot.querySelector('slot[name=image]')!;
+    if (hasImgSlot.assignedNodes().length === 0) {
+      this.initImagePlaceholder();
+    }
 
     this.domRefPlayButton.setAttribute(
       'aria-label',
@@ -265,6 +280,7 @@ export class LiteVimeoEmbed extends HTMLElement {
           if (this.domRefFrame.classList.contains('lvo-activated')) {
             this.domRefFrame.classList.remove('lvo-activated');
             this.shadowRoot.querySelector('iframe')!.remove();
+            // this.isIframeLoaded = false;
           }
         }
         break;
@@ -273,6 +289,7 @@ export class LiteVimeoEmbed extends HTMLElement {
         break;
     }
   }
+
 
   /**
    * Inject the iframe into the component body
