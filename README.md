@@ -107,6 +107,23 @@ Uses Intersection Observer if available to automatically load the Vimeo iframe w
 <lite-vimeo videoid="364402896" autoload autoplay></lite-vimeo>
 ```
 
+## Use the named slot to set a custom poster image
+```html
+<lite-youtube videoid="guJLfqTFfIw">
+  <img slot="image" src="my-poster-override.jpg">
+</lite-youtube>
+```
+
+## Disable the frame shadow (flat look)
+```html
+<style>
+  lite-vimeo {
+    /* No Shadow */
+    --lite-vimeo-frame-shadow-visible: no;
+  }
+</style>
+```
+
 ## Attributes
 
 The web component allows certain attributes to be give a little additional
