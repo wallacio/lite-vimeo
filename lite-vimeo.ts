@@ -124,8 +124,9 @@ export class LiteVimeoEmbed extends HTMLElement {
     shadowDom.innerHTML = `
       <style>
         :host {
-          --aspect-ratio: var(--lite-youtube-aspect-ratio, 16 / 9);
-          --aspect-ratio-short: var(--lite-youtube-aspect-ratio-short, 9 / 16);        
+          --aspect-ratio: var(--lite-vimeo-aspect-ratio, 16 / 9);
+          --aspect-ratio-short: var(--lite-vimeo-aspect-ratio-short, 9 / 16); 
+          --frame-shadow-visible: var(--lite-vimeo-frame-shadow-visible, yes);     
           contain: content;
           display: block;
           position: relative;
@@ -145,11 +146,23 @@ export class LiteVimeoEmbed extends HTMLElement {
           cursor: pointer;
         }
 
-        #fallbackPlaceholder,
-        slot[name=image]::slotted(*) {
+        #fallbackPlaceholder, slot[name=image]::slotted(*) {
           object-fit: cover;
           width: 100%;
         }
+
+        @container style(--frame-shadow-visible: yes) {
+          #frame::before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            background-image: linear-gradient(180deg, #111 -20%, transparent 90%);
+            height: 60px;
+            width: 100%;
+            z-index: 1;
+          }
+        }        
 
         #frame::before {
           content: '';
