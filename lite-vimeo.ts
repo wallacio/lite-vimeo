@@ -124,6 +124,8 @@ export class LiteVimeoEmbed extends HTMLElement {
     shadowDom.innerHTML = `
       <style>
         :host {
+          --aspect-ratio: var(--lite-youtube-aspect-ratio, 16 / 9);
+          --aspect-ratio-short: var(--lite-youtube-aspect-ratio-short, 9 / 16);        
           contain: content;
           display: block;
           position: relative;
@@ -197,6 +199,13 @@ export class LiteVimeoEmbed extends HTMLElement {
         .lvo-activated {
           cursor: unset;
         }
+        #frame picture {
+          transition: opacity 0.2s cubic-bezier(0, 0, 0.2, 1);
+          opacity: 1;
+        }
+        #frame.lvo-activated picture {
+          opacity: 0;
+        }
 
         #frame.lvo-activated::before,
         .lvo-activated .lvo-playbtn {
@@ -219,19 +228,13 @@ export class LiteVimeoEmbed extends HTMLElement {
         <button class="lvo-playbtn"></button>
       </div>
     `;
-    this.domRefFrame = this.shadowRoot.querySelector<HTMLDivElement>('#frame')!;
+    this.domRefFrame = shadowDom.querySelector<HTMLDivElement>('#frame')!;
     this.domRefImg = {
-      fallback: this.shadowRoot.querySelector<HTMLImageElement>(
-        '#fallbackPlaceholder',
-      )!,
-      webp: this.shadowRoot.querySelector<HTMLSourceElement>(
-        '#webpPlaceholder',
-      )!,
-      jpeg: this.shadowRoot.querySelector<HTMLSourceElement>(
-        '#jpegPlaceholder',
-      )!,
+      fallback: shadowDom.querySelector('#fallbackPlaceholder')!,
+      webp: shadowDom.querySelector('#webpPlaceholder')!,
+      jpeg: shadowDom.querySelector('#jpegPlaceholder')!,
     };
-    this.domRefPlayButton = this.shadowRoot.querySelector<HTMLButtonElement>(
+    this.domRefPlayButton = shadowDom.querySelector<HTMLButtonElement>(
       '.lvo-playbtn',
     )!;
   }

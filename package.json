@@ -1,10 +1,10 @@
 {
-  "name": "@slightlyoff/lite-vimeo",
+  "name": "@wallacio/lite-vimeo",
   "description": "A web component that loads Vimeo embed iframes faster. ShadowDom based version of Paul Irish' concept.",
   "author": "Alex Russell <slightlyoff@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git@github.com:slightlyoff/lite-vimeo.git"
+    "url": "git@github.com:wallacio/lite-vimeo.git"
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",
@@ -19,7 +19,7 @@
     "lite-vimeo.js.map"
   ],
   "license": "MIT",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "main": "lite-vimeo.js",
   "module": "lite-vimeo.js",
   "types": "lite-vimeo.d.ts",
@@ -28,9 +28,9 @@
     "vimeo"
   ],
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.29.0",
-    "@typescript-eslint/parser": "^2.29.0",
-    "eslint": "^6.8.0",
+    "@typescript-eslint/eslint-plugin": "^8.15.0",
+    "@typescript-eslint/parser": "^8.15.0",
+    "eslint": "^9.15.0",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-html": "^6.0.0",
