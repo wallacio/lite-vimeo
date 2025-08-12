@@ -270,7 +270,6 @@ export class LiteVimeoEmbed extends HTMLElement {
         // thumbnail_url: "https://i.vimeocdn.com/video/819916979-2d10b14e76f623b8efd8aaabef739468f206086f262fddb115b76245bdcc9813-d_295x166?region=us"
         const tnLarge = apiResponse.thumbnail_url;
         const imgId = (tnLarge.substr(tnLarge.lastIndexOf("/") + 1)).split("_")[0];
-        console.log(imgId);
         // const posterUrlWebp =
         //    `https://i.ytimg.com/vi_webp/${this.videoId}/hqdefault.webp`;
         const posterUrlWebp = `https://i.vimeocdn.com/video/${imgId}.webp?mw=1100&mh=619&q=70`;
