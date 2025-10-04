@@ -42,7 +42,7 @@ import '@slightlyoff/lite-vimeo';
 If you want the paste-and-go version, you can simply load it via CDN:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/@slightlyoff/lite-vimeo@0.1.3/lite-vimeo.js">
+<script type="module" src="https://cdn.jsdelivr.net/npm/@slightlyoff/lite-vimeo@0.1.4/lite-vimeo.js">
 ```
 
 ## Basic Usage
@@ -107,6 +107,14 @@ Uses Intersection Observer if available to automatically load the Vimeo iframe w
 <lite-vimeo videoid="364402896" autoload autoplay></lite-vimeo>
 ```
 
+## Play Unlisted Videos
+Accepts a `videohash` attribute that corresponds to Vimeo's `h` parameter for [unlisted videos](https://help.vimeo.com/hc/en-us/articles/12426199699985-Overview-of-video-privacy-settings#h_01FK121EGDV30KZV4232TNZPPS).
+```html
+<lite-vimeo videoid="981374828" videohash="208f5ff18e"></lite-vimeo>
+```
+
+Thanks to [@rkrishnan8594](https://github.com/rkrishnan8594) for this awesome feature.
+
 ## Attributes
 
 The web component allows certain attributes to be give a little additional
@@ -120,3 +128,4 @@ flexibility.
 | `autoload`   | Use Intersection Observer to load iframe when scrolled into view            | `false` |
 | `autoplay`   | Video attempts to play automatically if auto-load set and browser allows it | `false` |
 | `start`      | Set the point at which the video should start, in seconds                   | `0`     |
+| `videohash`  | The privacy hash (for an unlisted video) | ``     |

@@ -31,6 +31,8 @@ export declare class LiteVimeoEmbed extends HTMLElement {
     set videoPlay(name: string);
     get videoStartAt(): string;
     set videoStartAt(time: string);
+    get videoHash(): string;
+    set videoHash(hash: string);
     get autoLoad(): boolean;
     set autoLoad(value: boolean);
     get autoPlay(): boolean;

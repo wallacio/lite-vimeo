@@ -89,6 +89,14 @@ export class LiteVimeoEmbed extends HTMLElement {
     this.setAttribute('start', time);
   }
 
+  get videoHash(): string {
+    return encodeURIComponent(this.getAttribute('videohash') || '');
+  }
+
+  set videoHash(hash: string) {
+    this.setAttribute('videohash', hash);
+  }
+
   get autoLoad(): boolean {
     return this.hasAttribute('autoload');
   }
@@ -290,15 +298,20 @@ export class LiteVimeoEmbed extends HTMLElement {
        *    allow="autoplay; fullscreen" allowfullscreen>
        *  </iframe>
        */
-      // FIXME: add a setting for autoplay
-      const apValue = ((this.autoLoad && this.autoPlay) || (!this.autoLoad)) ?
-                        "autoplay=1" : "";
-      const srcUrl = new URL(
-        `/video/${this.videoId}?${apValue}&#t=${this.videoStartAt}&dnt=1`,
-        "https://player.vimeo.com/"
-      );
+      const srcUrl = new URL(`https://player.vimeo.com/video/${this.videoId}`);
+      srcUrl.searchParams.set('dnt', '1');
+      if (this.autoLoad && this.autoPlay) {
+        srcUrl.searchParams.set('autoplay', '1');
+      }
 
-      // TODO: construct src value w/ URL constructor
+      if (this.videoHash) {
+        srcUrl.searchParams.set('h', this.videoHash);
+      }
+
+      if (this.videoStartAt) {
+        srcUrl.hash = `t=${this.videoStartAt}`;
+      }
+
       const iframeHTML = `
 <iframe frameborder="0"
   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"

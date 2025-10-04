@@ -61,10 +61,16 @@ export class LiteVimeoEmbed extends HTMLElement {
         this.setAttribute('videoPlay', name);
     }
     get videoStartAt() {
-        return this.getAttribute('videoPlay') || '0s';
+        return this.getAttribute('start') || '0s';
     }
     set videoStartAt(time) {
-        this.setAttribute('videoPlay', time);
+        this.setAttribute('start', time);
+    }
+    get videoHash() {
+        return encodeURIComponent(this.getAttribute('videohash') || '');
+    }
+    set videoHash(hash) {
+        this.setAttribute('videohash', hash);
     }
     get autoLoad() {
         return this.hasAttribute('autoload');
@@ -107,6 +113,7 @@ export class LiteVimeoEmbed extends HTMLElement {
           position: absolute;
           width: 100%;
           height: 100%;
+          left: 0;
         }
 
         #frame {
@@ -141,6 +148,7 @@ export class LiteVimeoEmbed extends HTMLElement {
           border-radius: 10%;
           transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
           border: 0;
+          cursor: pointer;
         }
         #frame:hover .lvo-playbtn {
           background-color: rgb(98, 175, 237);
@@ -241,11 +249,17 @@ export class LiteVimeoEmbed extends HTMLElement {
              *    allow="autoplay; fullscreen" allowfullscreen>
              *  </iframe>
              */
-            // FIXME: add a setting for autoplay
-            const apValue = ((this.autoLoad && this.autoPlay) || (!this.autoLoad)) ?
-                "autoplay=1" : "";
-            const srcUrl = new URL(`/video/${this.videoId}?${apValue}&#t=${this.videoStartAt}`, "https://player.vimeo.com/");
-            // TODO: construct src value w/ URL constructor
+            const srcUrl = new URL(`https://player.vimeo.com/video/${this.videoId}`);
+            srcUrl.searchParams.set('dnt', '1');
+            if (this.autoLoad && this.autoPlay) {
+                srcUrl.searchParams.set('autoplay', '1');
+            }
+            if (this.videoHash) {
+                srcUrl.searchParams.set('h', this.videoHash);
+            }
+            if (this.videoStartAt) {
+                srcUrl.hash = `t=${this.videoStartAt}`;
+            }
             const iframeHTML = `
 <iframe frameborder="0"
   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
