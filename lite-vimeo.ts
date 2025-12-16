@@ -3,7 +3,7 @@
  * The shadowDom / Intersection Observer version of Paul's concept:
  * https://github.com/paulirish/lite-youtube-embed
  *
- * A lightweight YouTube embed. Still should feel the same to the user, just
+ * A lightweight Vimeo embed. Still should feel the same to the user, just
  * MUCH faster to initialize and paint.
  *
  * Thx to these as the inspiration
@@ -84,11 +84,19 @@ export class LiteVimeoEmbed extends HTMLElement {
   }
 
   get videoStartAt(): string {
-    return this.getAttribute('videoPlay') || '0s';
+    return this.getAttribute('start') || '0s';
   }
 
   set videoStartAt(time: string) {
-    this.setAttribute('videoPlay', time);
+    this.setAttribute('start', time);
+  }
+
+  get videoHash(): string {
+    return encodeURIComponent(this.getAttribute('videohash') || '');
+  }
+
+  set videoHash(hash: string) {
+    this.setAttribute('videohash', hash);
   }
 
   get autoLoad(): boolean {
@@ -188,6 +196,7 @@ export class LiteVimeoEmbed extends HTMLElement {
           border-radius: 10%;
           transition: all 0.2s cubic-bezier(0, 0, 0.2, 1);
           border: 0;
+          cursor: pointer;
         }
         #frame:hover .lvo-playbtn {
           background-color: rgb(98, 175, 237);
@@ -321,15 +330,20 @@ export class LiteVimeoEmbed extends HTMLElement {
        *    allow="autoplay; fullscreen" allowfullscreen>
        *  </iframe>
        */
-      // FIXME: add a setting for autoplay
-      const apValue = ((this.autoLoad && this.autoPlay) || (!this.autoLoad)) ?
-                        "autoplay=1" : "";
-      const srcUrl = new URL(
-        `/video/${this.videoId}?${apValue}&#t=${this.videoStartAt}`,
-        "https://player.vimeo.com/"
-      );
+      const srcUrl = new URL(`https://player.vimeo.com/video/${this.videoId}`);
+      srcUrl.searchParams.set('dnt', '1');
+      if (this.autoLoad && this.autoPlay) {
+        srcUrl.searchParams.set('autoplay', '1');
+      }
 
-      // TODO: construct src value w/ URL constructor
+      if (this.videoHash) {
+        srcUrl.searchParams.set('h', this.videoHash);
+      }
+
+      if (this.videoStartAt) {
+        srcUrl.hash = `t=${this.videoStartAt}`;
+      }
+
       const iframeHTML = `
 <iframe frameborder="0"
   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
@@ -349,16 +363,15 @@ export class LiteVimeoEmbed extends HTMLElement {
     // we don't know which image type to preload, so warm the connection
     LiteVimeoEmbed.addPrefetch('preconnect', 'https://i.vimeocdn.com/');
 
-    // API is the video-id based
-    // http://vimeo.com/api/v2/video/364402896.json
-    const apiUrl = `https://vimeo.com/api/v2/video/${this.videoId}.json`;
+    // Hack to use the oEmbed API endpoint now that v2 is shut down
+    const apiUrl = `https://vimeo.com/api/oembed.json?url=https://vimeo.com/${this.videoId}`;
 
     // Now fetch the JSON that locates our placeholder from vimeo's JSON API
-    const apiResponse = (await (await fetch(apiUrl)).json())[0];
+    const apiResponse = (await (await fetch(apiUrl)).json());
 
     // Extract the image id, e.g. 819916979, from a URL like:
-    // thumbnail_large: "https://i.vimeocdn.com/video/819916979_640.jpg"
-    const tnLarge = apiResponse.thumbnail_large;
+    // thumbnail_url: "https://i.vimeocdn.com/video/819916979-2d10b14e76f623b8efd8aaabef739468f206086f262fddb115b76245bdcc9813-d_295x166?region=us"
+    const tnLarge = apiResponse.thumbnail_url;
     const imgId = (tnLarge.substr(tnLarge.lastIndexOf("/") + 1)).split("_")[0];
 
     // const posterUrlWebp =
