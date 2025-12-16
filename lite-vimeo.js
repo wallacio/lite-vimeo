@@ -227,9 +227,7 @@ export class LiteVimeoEmbed extends HTMLElement {
         if (!this.iframeLoaded) {
             const srcUrl = new URL(`https://player.vimeo.com/video/${this.videoId}`);
             srcUrl.searchParams.set('dnt', '1');
-            if (this.autoLoad && this.autoPlay) {
-                srcUrl.searchParams.set('autoplay', '1');
-            }
+            srcUrl.searchParams.set('autoplay', '1');
             if (this.videoHash) {
                 srcUrl.searchParams.set('h', this.videoHash);
             }
